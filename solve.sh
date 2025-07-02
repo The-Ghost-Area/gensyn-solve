@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# ─────────────────────────────────────────────────────────────
-# 🎨 RANDOM COLORED BANNER
-# ─────────────────────────────────────────────────────────────
+# ╭────────────────────────────────────────────────────────────╮
+# │             🎯 GENSYN-SOLVE SETUP SCRIPT v1.0              │
+# │                by The-Ghost-Area | MIT License             │
+# ╰────────────────────────────────────────────────────────────╯
+
+# 🎨 Random Fancy Banner
 BANNER="██████╗ ███████╗██╗   ██╗██╗██╗     
 ██╔══██╗██╔════╝██║   ██║██║██║     
 ██║  ██║█████╗  ██║   ██║██║██║     
@@ -12,14 +15,11 @@ BANNER="██████╗ ███████╗██╗   ██╗█�
 
 COLORS=(31 32 33 34 35 36 91 92 93 94 95 96)
 COLOR=${COLORS[$RANDOM % ${#COLORS[@]}]}
-echo -e "\e[1;${COLOR}m$BANNER\e[0m"
-echo ""
+echo -e "\n\e[1;${COLOR}m$BANNER\e[0m"
+echo -e "🔧 Starting Gensyn Auto Setup — chill maar, sab ho jayega bro!\n"
 
-# ─────────────────────────────────────────────────────────────
-# 🔧 PATCH SYSTEM_UTILS.PY
-# ─────────────────────────────────────────────────────────────
-echo "🔧 Starting System Diagnostics Patch..."
-
+# 🔧 Step 1: Patch system_utils.py with upgraded diagnostics
+echo "🚀 Patching system_utils.py with full system diagnostics..."
 TARGET_PATH="genrl-swarm/src/genrl_swarm/logging_utils/system_utils.py"
 
 cat > "$TARGET_PATH" << 'EOF'
@@ -132,19 +132,19 @@ def get_system_info():
     return "\n".join(lines)
 EOF
 
-echo "✅ system_utils.py replaced with enhanced version."
+echo "✅ system_utils.py patched successfully!"
 
-# ─────────────────────────────────────────────────────────────
-# 🧼 FIX TIMEOUT BUG
-# ─────────────────────────────────────────────────────────────
+# 🧼 Step 2: Timeout Bug Fix
+echo -e "\n🛠  Applying timeout bug fix..."
 DAEMON_PATH=~/rl-swarm/.venv/lib/python3.12/site-packages/hivemind/p2p/p2p_daemon.py
 
 if [ -f "$DAEMON_PATH" ]; then
     sed -i 's/startup_timeout: float = *15/startup_timeout: float = 120/' "$DAEMON_PATH"
-    echo "🧼 Timeout bug fixed in p2p_daemon.py"
+    echo "✅ Timeout increased to 120s in p2p_daemon.py"
 else
-    echo "⚠️ Timeout patch skipped — file not found: $DAEMON_PATH"
+    echo "⚠️  Daemon file not found — skipping timeout patch"
 fi
 
-echo ""
-echo "🎉 All tasks completed successfully!"
+# 🎉 All done!
+echo -e "\n🎉 Setup complete! Tera system ab full 🔥 🔍 ready hai!"
+echo -e "📂 You can now run the swarm & start debugging like a boss.\n"
