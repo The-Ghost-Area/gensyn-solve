@@ -5,11 +5,7 @@ echo "🔧 Starting System Diagnostics Patch..."
 # Step 1: Define target path
 TARGET_PATH="genrl-swarm/src/genrl_swarm/logging_utils/system_utils.py"
 
-# Step 2: Backup (optional)
-cp "$TARGET_PATH" "$TARGET_PATH.bak"
-echo "📦 Backup created at $TARGET_PATH.bak"
-
-# Step 3: Overwrite with enhanced system utility
+# Step 2: Overwrite with enhanced system utility
 cat > "$TARGET_PATH" << 'EOF'
 import platform
 import subprocess
@@ -120,9 +116,9 @@ def get_system_info():
     return "\n".join(lines)
 EOF
 
-echo "✅ System info utility updated."
+echo "✅ system_utils.py replaced with enhanced version."
 
-# Step 4: Patch Timeout Bug
+# Step 3: Patch the Timeout Bug
 DAEMON_PATH=~/rl-swarm/.venv/lib/python3.12/site-packages/hivemind/p2p/p2p_daemon.py
 
 if [ -f "$DAEMON_PATH" ]; then
@@ -132,4 +128,4 @@ else
     echo "⚠️ Timeout patch skipped — file not found: $DAEMON_PATH"
 fi
 
-echo "🎉 All tasks completed!"
+echo "🎉 All tasks completed successfully!"
