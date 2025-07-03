@@ -150,6 +150,18 @@ else
     echo "⚠️  Daemon file not found — skipping timeout patch"
 fi
 
+# 🔐 Step 3: Set Permissions for swarm.pem
+echo -e "\n🔐 Setting permissions for swarm.pem..."
+SWARM_PEM_PATH="/home/user/rl-swarm/swarm.pem"
+
+if [ -f "$SWARM_PEM_PATH" ]; then
+    sudo chown user:user "$SWARM_PEM_PATH"
+    sudo chmod 600 "$SWARM_PEM_PATH"
+    echo "✅ Permissions set for swarm.pem"
+else
+    echo "❌ swarm.pem not found — skipping permissions setup"
+fi
+
 # 🎉 All done!
 echo -e "\n🎉 Setup complete! Your system is now full 🔥 🔍 ready!"
 echo -e "📂 You can now run the swarm & start debugging like a boss.\n"
