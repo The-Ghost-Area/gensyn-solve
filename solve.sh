@@ -16,7 +16,7 @@ BANNER="██████╗ ███████╗██╗   ██╗█�
 COLORS=(31 32 33 34 35 36 91 92 93 94 95 96)
 COLOR=${COLORS[$RANDOM % ${#COLORS[@]}]}
 echo -e "\n\e[1;${COLOR}m$BANNER\e[0m"
-echo -e "🔧 Starting Gensyn Auto Setup — chill maar, sab ho jayega bro!\n"
+echo -e "🔧 Starting Gensyn Auto Setup — DEVIL ko thanks bolo!\n"
 
 # 🔧 Step 1: Patch system_utils.py with upgraded diagnostics
 echo "🚀 Patching system_utils.py with full system diagnostics..."
