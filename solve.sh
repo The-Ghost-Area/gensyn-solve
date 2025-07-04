@@ -17,7 +17,7 @@ COLOR=${COLORS[$RANDOM % ${#COLORS[@]}]}
 
 # 🎉 Display banner with random color
 echo -e "\n\e[1;${COLOR}m$BANNER\e[0m"
-echo -e "🔧 Starting Gensyn Auto Setup — Say thanks to DEVIL!\n"
+echo -e "🔧 Starting Gensyn Auto Error Solve — Say thanks to DEVIL!\n"
 
 # 🔧 Step 1: Patch system_utils.py with upgraded diagnostics
 TARGET_PATH="$HOME/rl-swarm/genrl-swarm/src/genrl_swarm/logging_utils/system_utils.py"
