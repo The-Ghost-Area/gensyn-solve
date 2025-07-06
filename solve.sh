@@ -163,5 +163,5 @@ else
 fi
 
 # 🎉 All done!
-echo -e "\n🎉 Setup complete! Your system is now full 🔥 🔍 ready!"
-echo -e "📂 You can now run the swarm & start debugging like a boss.\n"
+echo -e "\n🎉 Setup complete! Your system is now full ready🔥 🔍 ready!"
+echo -e "📂 You can now run the swarm & start node like a boss.\n"
