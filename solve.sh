@@ -20,7 +20,7 @@ echo -e "\n\e[1;${COLOR}m$BANNER\e[0m"
 echo -e "🔧 Starting Gensyn Auto Error Solve — Say thanks to DEVIL!\n"
 
 # 🔧 Step 1: Patch system_utils.py with upgraded diagnostics
-TARGET_PATH="$HOME/rl-swarm/genrl-swarm/src/genrl_swarm/logging_utils/system_utils.py"
+TARGET_PATH="$HOME/rl-swarm/.venv/lib/python3.12/site-packages/genrl/logging_utils/system_utils.py"
 echo "🚀 Checking system_utils.py for patching..."
 
 if [ -f "$TARGET_PATH" ]; then
@@ -29,17 +29,17 @@ if [ -f "$TARGET_PATH" ]; then
 import platform
 import subprocess
 import sys
-import os
 from shutil import which
+
 import psutil
 
 DIVIDER = "[---------] SYSTEM INFO [---------]"
+
 
 def get_system_info():
     lines = ['\n']
     lines.append(DIVIDER)
     lines.append("")
-
     lines.append("Python Version:")
     lines.append(f"  {sys.version}")
 
@@ -54,9 +54,10 @@ def get_system_info():
     lines.append(f"  Physical cores: {psutil.cpu_count(logical=False)}")
     lines.append(f"  Total cores: {psutil.cpu_count(logical=True)}")
     cpu_freq = psutil.cpu_freq()
+
     if cpu_freq:
-        lines.append(f"  Max Frequency: {cpu_freq.max:.2f} Mhz")
-        lines.append(f"  Current Frequency: {cpu_freq.current:.2f} Mhz")
+        lines.append(f"  Max Frequency: {cpu_freq.max:.2f} MHz")
+        lines.append(f"  Current Frequency: {cpu_freq.current:.2f} MHz")
 
     lines.append("\nMemory Information:")
     vm = psutil.virtual_memory()
@@ -64,33 +65,34 @@ def get_system_info():
     lines.append(f"  Available: {vm.available / (1024**3):.2f} GB")
     lines.append(f"  Used: {vm.used / (1024**3):.2f} GB")
 
-    lines.append("\nDisk Information (>80%):")
+    lines.append("\nDisk Information (>80% usage):")
     partitions = psutil.disk_partitions()
     for partition in partitions:
         try:
-            if not os.path.exists(partition.mountpoint):
+            disk_usage = psutil.disk_usage(partition.mountpoint)
+            if disk_usage.total == 0:
                 continue
-            usage = psutil.disk_usage(partition.mountpoint)
-            if usage.used / usage.total > 0.8:
+            if disk_usage.used / disk_usage.total > 0.8:
                 lines.append(f"  Device: {partition.device}")
                 lines.append(f"    Mount point: {partition.mountpoint}")
-                lines.append(f"      Total size: {usage.total / (1024**3):.2f} GB")
-                lines.append(f"      Used: {usage.used / (1024**3):.2f} GB")
-                lines.append(f"      Free: {usage.free / (1024**3):.2f} GB")
+                lines.append(f"      Total size: {disk_usage.total / (1024**3):.2f} GB")
+                lines.append(f"      Used: {disk_usage.used / (1024**3):.2f} GB")
+                lines.append(f"      Free: {disk_usage.free / (1024**3):.2f} GB")
         except (PermissionError, FileNotFoundError):
-            lines.append(f"      Skipped (Access/File error) -> {partition.mountpoint}")
+            lines.append(f"  Skipped mount point: {partition.mountpoint} (unavailable)")
 
     lines.append("")
 
+    # Check for NVIDIA GPU
     if which('nvidia-smi'):
         try:
             lines.append("\nNVIDIA GPU Information:")
-            output = subprocess.check_output([
-                'nvidia-smi',
-                '--query-gpu=gpu_name,memory.total,memory.used,memory.free,temperature.gpu,utilization.gpu',
-                '--format=csv,noheader,nounits'
-            ]).decode()
-            for gpu_line in output.strip().split('\n'):
+            nvidia_output = subprocess.check_output(
+                ['nvidia-smi', '--query-gpu=gpu_name,memory.total,memory.used,memory.free,temperature.gpu,utilization.gpu',
+                 '--format=csv,noheader,nounits'],
+                universal_newlines=True
+            )
+            for gpu_line in nvidia_output.strip().split('\n'):
                 name, total, used, free, temp, util = gpu_line.split(', ')
                 lines.append(f"  GPU: {name}")
                 lines.append(f"    Memory Total: {total} MB")
@@ -98,26 +100,25 @@ def get_system_info():
                 lines.append(f"    Memory Free: {free} MB")
                 lines.append(f"    Temperature: {temp}°C")
                 lines.append(f"    Utilization: {util}%")
-        except Exception:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             lines.append("  Error getting NVIDIA GPU information")
 
+    # Check for AMD GPU
     if which('rocm-smi'):
         try:
             lines.append("\nAMD GPU Information:")
-            rocm_output = subprocess.check_output([
-                'rocm-smi', '--showproductname', '--showmeminfo', '--showtemp'
-            ]).decode()
+            rocm_output = subprocess.check_output(['rocm-smi', '--showproductname', '--showuse'], universal_newlines=True)
             lines.extend(f"  {line}" for line in rocm_output.strip().split('\n'))
-        except Exception:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             lines.append("  Error getting AMD GPU information")
 
+    # Check for Apple Silicon
     if platform.system() == 'Darwin' and platform.machine() == 'arm64':
         try:
             lines.append("\nApple Silicon Information:")
-            brand = subprocess.check_output([
-                'sysctl', '-n', 'machdep.cpu.brand_string'
-            ]).decode().strip()
-            lines.append(f"  Processor: {brand}")
+            cpu_brand = subprocess.check_output(['sysctl', '-n', 'machdep.cpu.brand_string'], universal_newlines=True)
+            lines.append(f"  Processor: {cpu_brand.strip()}")
+
             try:
                 import torch
                 if torch.backends.mps.is_available():
@@ -127,7 +128,7 @@ def get_system_info():
                     lines.append("  MPS: Not available")
             except ImportError:
                 lines.append("  PyTorch not installed, cannot check MPS availability")
-        except Exception:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             lines.append("  Error getting Apple Silicon information")
 
     lines.append("")
