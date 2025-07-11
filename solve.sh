@@ -83,7 +83,6 @@ def get_system_info():
 
     lines.append("")
 
-    # Check for NVIDIA GPU
     if which('nvidia-smi'):
         try:
             lines.append("\nNVIDIA GPU Information:")
@@ -103,7 +102,6 @@ def get_system_info():
         except (subprocess.CalledProcessError, FileNotFoundError):
             lines.append("  Error getting NVIDIA GPU information")
 
-    # Check for AMD GPU
     if which('rocm-smi'):
         try:
             lines.append("\nAMD GPU Information:")
@@ -112,7 +110,6 @@ def get_system_info():
         except (subprocess.CalledProcessError, FileNotFoundError):
             lines.append("  Error getting AMD GPU information")
 
-    # Check for Apple Silicon
     if platform.system() == 'Darwin' and platform.machine() == 'arm64':
         try:
             lines.append("\nApple Silicon Information:")
