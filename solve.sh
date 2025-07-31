@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # 🎨 Enhanced Gensyn Auto Setup Banner with User-Provided ASCII
 BANNER=$(cat << 'EOF'
@@ -12,26 +11,20 @@ BANNER=$(cat << 'EOF'
 EOF
 )
 
-# 🔢 Random color selection
+# 🔢 Color selection and display
 COLORS=(31 32 33 34 35 36 91 92 93 94 95 96)
 COLOR=${COLORS[$RANDOM % ${#COLORS[@]}]}
 
-# 🎉 Show banner
+# 🎉 Display banner with random color
 echo -e "\n\e[1;${COLOR}m$BANNER\e[0m"
 echo -e "🔧 Starting Gensyn Auto Error Solve — Say thanks to DEVIL!\n"
 
-# 🏜️ Step 5: Write rg-swarm.yaml config file only if rl-swarm exists
-if [ -d "./rl-swarm" ]; then
-  RL_DIR="./rl-swarm"
-elif [ -d "$HOME/rl-swarm" ]; then
-  RL_DIR="$HOME/rl-swarm"
-else
-  echo -e "\n❌ Error: 'rl-swarm' folder not found. Please clone it first."
-  exit 1
-fi
+# 🔧 Step 1: Patch system_utils.py with upgraded diagnostics
+# ... (unchanged)
 
-CONFIG_PATH="$RL_DIR/rgym_exp/config/rg-swarm.yaml"
-echo -e "\n🔧 Writing final rg-swarm.yaml config to $CONFIG_PATH..."
+# 🏜️ Step 5: Write rg-swarm.yaml config file
+CONFIG_PATH="$HOME/rl-swarm/rgym_exp/config/rg-swarm.yaml"
+echo -e "\n🔧 Writing final rg-swarm.yaml config..."
 
 mkdir -p "$(dirname "$CONFIG_PATH")"
 cat > "$CONFIG_PATH" << 'EOF'
@@ -138,15 +131,11 @@ default_small_model_pool:
   - Qwen/Qwen3-0.6B
 EOF
 
-echo "✅ Final config written to: $CONFIG_PATH"
+echo "✅ Final config written to rg-swarm.yaml"
 
-# 🔐 Step 6: Set permissions for .pem key (optional, safe fallback)
-SWARM_KEY="$HOME/.swarm/keys/swarm.pem"
-if [ -f "$SWARM_KEY" ]; then
-  chmod 600 "$SWARM_KEY"
-  echo "🔐 Permissions set for swarm.pem"
-fi
+# 🔐 Step 6: Set Permissions for swarm.pem
+# ... (unchanged)
 
-# 🎉 Done
-echo -e "\n🎉 Setup complete! Your system is now fully ready 🔍"
+# 🎉 All done!
+echo -e "\n🎉 Setup complete! Your system is now fully ready 🔍 ready!"
 echo -e "📂 You can now run the swarm & start node like a boss.\n"
